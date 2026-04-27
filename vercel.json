@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "frontend/dist"
+      }
+    },
+    {
+      "src": "backend/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/index.js"
+    },
+    {
+      "src": "/socket.io/(.*)",
+      "dest": "/backend/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "env": {
+    "MONGODB_URL": "mongodb+srv://sadiqhassan3121_db_user:KLQ8adxsrSHCl0f3@cluster0.jjf1xcq.mongodb.net/chatapp?retryWrites=true&w=majority",
+    "JWT_SECRET": "KJHKSHVN",
+    "CLOUD_NAME": "dyrz3nyjn",
+    "API_KEY": "939659345778684",
+    "API_SECRET": "97sq2q5P2WCQtqaBBIcgI6xIsq8"
+  }
+}
