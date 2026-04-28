@@ -1,45 +1,54 @@
-import express from "express"
-import dotenv from "dotenv"
-import connectDb from "./config/db.js"
-import authRouter from "./routes/auth.routes.js"
-import cookieParser from "cookie-parser"
-dotenv.config()
-import cors from "cors"
-import userRouter from "./routes/user.routes.js"
-import messageRouter from "./routes/message.routes.js"
-import { app, server } from "./socket/socket.js"
+import dotenv from "dotenv";
+dotenv.config();
 
-const port=process.env.PORT || 5000
-import dns from "dns"
-dns.setServers([
-      '1.1.1.1',
-      '8.8.8.8'
-])
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dns from "dns";
 
+import connectDb from "./config/db.js";
+import authRouter from "./routes/auth.routes.js";
+import userRouter from "./routes/user.routes.js";
+import messageRouter from "./routes/message.routes.js";
+import { app, server } from "./socket/socket.js";
+
+// ✅ DNS fix (optional but ok)
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
+
+// ✅ PORT (important for Render)
+const PORT = process.env.PORT || 5000;
+
+// ✅ Allowed origins (clean + correct)
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://real-time-chat-ngph4g48y-sadiqhassan123s-projects.vercel.app',
-  process.env.FRONTEND_URL
-]
+  "http://localhost:5173",
+  process.env.FRONTEND_URL // set this in Render
+];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
-  credentials: true
-}))
+// ✅ CORS setup (fixed)
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
-app.use(express.json())
-app.use(cookieParser())
-app.use("/api/auth",authRouter)
-app.use("/api/user",userRouter)
-app.use("/api/message",messageRouter)
+// ✅ Middlewares
+app.use(express.json());
+app.use(cookieParser());
 
-server.listen(port,()=>{
-    connectDb()
-    console.log("server started")
-})
+// ✅ Routes
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/message", messageRouter);
+
+// ✅ Start server
+server.listen(PORT, async () => {
+  await connectDb();
+  console.log(`🚀 Server running on port ${PORT}`);
+});
