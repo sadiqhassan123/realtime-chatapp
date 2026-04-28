@@ -1,4 +1,3 @@
-
 import express from "express"
 import dotenv from "dotenv"
 import connectDb from "./config/db.js"
@@ -17,17 +16,28 @@ dns.setServers([
       '8.8.8.8'
 ])
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://real-time-chat-ngph4g48y-sadiqhassan123s-projects.vercel.app',
+  process.env.FRONTEND_URL
+]
+
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : "http://localhost:5173",
-    credentials:true
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true
 }))
+
 app.use(express.json())
 app.use(cookieParser())
 app.use("/api/auth",authRouter)
 app.use("/api/user",userRouter)
 app.use("/api/message",messageRouter)
-
-
 
 server.listen(port,()=>{
     connectDb()
