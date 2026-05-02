@@ -1,3 +1,4 @@
+const API = import.meta.env.VITE_BACKEND_URL;
 import React, { useRef, useState } from 'react'
 import dp from "../assets/dp.webp"
 import { IoCameraOutline } from "react-icons/io5";
